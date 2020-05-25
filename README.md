@@ -1,68 +1,42 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Introduction
 
-In the project directory, you can run:
+This project uses a `docker-compose` file to bundle the React app with a Postgres database and [Hasura GraphQL Engine](https://hasura.io/).
+Upon start the database will be initialized with tables `jobs`, `companies`, `investors` and `company_investors` and seeded with data.
+
+## How to run the project
+
+There are two ways how to run the project:
+1.) Using only the docker-compose file:
+    * `docker-compose up --build`
+This will start the React app on port 8000 and Hasura on port 8080
+
+
+2.) Running a local version of the React app alongside the docker container 
+    * `docker-compose up -d --build`
+    * `yarn install`
+    * `yarn start`
+This will start the local React app on port 3000 and Hasura on port 8080
+
+### `docker-compose up -d --build`
+
+Builds and starts the containers for the React app, Postgres database and Hasura Console alongside each other.
+It can take a few seconds after the containers have started until the Database is fully initialized and seeded.
 
 ### `yarn start`
 
-Runs the app in the development mode.<br />
+Runs the app in the local development mode. If you prefer this to the dockerized React app. <br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+You  still have to run the docker container at the same time, to make the Database + Hasura Console available.
 
-### `yarn test`
+## About Hasura GraphQL Engine
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Hasura GraphQL Engine is a blazing-fast GraphQL server that gives you **instant, realtime GraphQL APIs over Postgres**, with [**webhook triggers**](event-triggers.md) on database events, and [**remote schemas**](remote-schemas.md) for business logic.
 
-### `yarn build`
+Hasura helps you build GraphQL apps backed by Postgres or incrementally move to GraphQL for existing applications using Postgres.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Read more at [hasura.io](https://hasura.io) and the [docs](https://hasura.io/docs).
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
