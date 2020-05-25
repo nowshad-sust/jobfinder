@@ -8,28 +8,33 @@ Upon start the database will be initialized with tables `jobs`, `companies`, `in
 ## How to run the project
 
 There are two ways how to run the project:
-1.) Using only the docker-compose file:
-    * `docker-compose up --build`
-This will start the React app on port 8000 and Hasura on port 8080
+
+1.) Using only the docker-compose file: 
+- `docker-compose up --build`
+- This will start the React app on port 8000 and Hasura on port 8080
 
 
 2.) Running a local version of the React app alongside the docker container 
-    * `docker-compose up -d --build`
-    * `yarn install`
-    * `yarn start`
-This will start the local React app on port 3000 and Hasura on port 8080
+- `docker-compose up -d --build`
+- `yarn install`
+- `yarn start`
+- This will start the local React app on port 3000 and Hasura on port 8080
+
+## Description of commands
 
 ### `docker-compose up -d --build`
 
 Builds and starts the containers for the React app, Postgres database and Hasura Console alongside each other.
 It can take a few seconds after the containers have started until the Database is fully initialized and seeded.
+* Open [http://localhost:8000](http://localhost:8000) for the **React app**
+* Open [http://localhost:8080](http://localhost:8080) for the **Hasura Console**
 
 ### `yarn start`
 
 Runs the app in the local development mode. If you prefer this to the dockerized React app. <br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:3000](http://localhost:3000) to view the **React app**
 
-You  still have to run the docker container at the same time, to make the Database + Hasura Console available.
+You **still have to run the docker containers** at the same time, to make the Database + Hasura Console available.
 
 ## About Hasura GraphQL Engine
 
