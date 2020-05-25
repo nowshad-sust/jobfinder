@@ -36,6 +36,13 @@ Open [http://localhost:3000](http://localhost:3000) to view the **React app**
 
 You **still have to run the docker containers** at the same time, to make the Database + Hasura Console available.
 
+## Executing commands in the React container (e.g. for adding packages)
+If you want to add a new package, you can do this in the project. But it won't automatically be available in the React container without rebuilding.
+
+To make an added package available without rebuilding you can run yarn install directly in the container:
+
+`docker exec -it coding-challenge yarn install`
+
 ## About Hasura GraphQL Engine
 
 Hasura GraphQL Engine is a blazing-fast GraphQL server that gives you **instant, realtime GraphQL APIs over Postgres**, with [**webhook triggers**](event-triggers.md) on database events, and [**remote schemas**](remote-schemas.md) for business logic.
