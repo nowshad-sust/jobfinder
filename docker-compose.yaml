@@ -10,8 +10,9 @@ services:
       - "./:/usr/src/app"
       - "/usr/src/app/node_modules"
     ports:
-      - 3000:3000
+      - 8000:8000
     environment:
+      - PORT=8000
       - CHOKIDAR_USEPOLLING=true
       - NODE_ENV=development
       - REACT_APP_GRAPHQL_URL=http://localhost:8080/v1/graphql
