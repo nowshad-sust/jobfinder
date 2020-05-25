@@ -10,8 +10,8 @@ ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
 # install and cache app dependencies
 ADD package.json /usr/src/app/package.json
-RUN yarn install
-RUN yarn add global react-scripts@0.9.5
+RUN yarn install --silent
+RUN yarn add global react-scripts@3.4.0
 
 # add app
 ADD . /usr/src/app
