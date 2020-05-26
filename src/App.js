@@ -1,33 +1,37 @@
 import React from "react";
+import { Layout } from "antd";
 import { ApolloProvider } from "@apollo/react-hooks";
-import logo from "./logo.svg";
-import "./App.css";
 import ApolloClient from "./apollo";
+import Nav from "./components/Nav";
+import Filter from "./components/Filter";
 import JobList from "./components/JobList";
 
+import "./App.css";
+
 function App() {
-  return (
-    <ApolloProvider client={ApolloClient}>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1>Hello friend</h1>
-          <JobList />
-          <p>
-            <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    </ApolloProvider>
-  );
+	return (
+		<ApolloProvider client={ApolloClient}>
+			<div className="App">
+				<Layout
+					className="main-layout"
+					style={{ width: "100%", height: "100%" }}
+				>
+					<Nav />
+					<Layout width="100%">
+						<Filter />
+						<Layout.Content style={{ width: "100%", marginTop: "50px" }}>
+							<div
+								className="site-layout-background"
+								style={{ padding: 24, minHeight: 360, width: "100%" }}
+							>
+								<JobList />
+							</div>
+						</Layout.Content>
+					</Layout>
+				</Layout>
+			</div>
+		</ApolloProvider>
+	);
 }
 
 export default App;
