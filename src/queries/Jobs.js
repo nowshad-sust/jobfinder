@@ -1,14 +1,31 @@
 import { gql } from "apollo-boost";
 
 const QUERY_JOBS = gql`
-	query fetchJobs {
-		jobs(limit: 20, offset: 10) {
+	query fetchJobs(
+		$keyword: String!
+		$cities: [String!]
+		$companies: [String!]
+		$investors: [Int!]
+	) {
+		jobs(
+			where: {
+				title: { _ilike: $keyword }
+				city: { _in: $cities }
+				company: {
+					name: { _in: $companies }
+					company_investors: { investor_id: { _in: $investors } }
+				}
+			}
+			limit: 30
+			offset: 10
+			distinct_on: id
+		) {
+			city
 			id
 			title
-			city
 			company {
-				id
 				name
+				id
 				company_investors {
 					investor {
 						id

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import queryString from "query-string";
 import { Layout, Input, Select, Button, Typography } from "antd";
 import {
 	SearchOutlined,
@@ -6,13 +7,43 @@ import {
 	EnvironmentOutlined,
 	DownSquareOutlined,
 } from "@ant-design/icons";
+import { BrowserRouter as Router, Link, useLocation } from "react-router-dom";
+import { store } from "../store/store";
+import * as actions from "../store/actions";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { Option } = Select;
 
-const cities = ["Berlin", "Munich", "Cologne", "Hamburg", "Dusseldorf"];
+const citiesArray = ["Berlin", "Munich", "Cologne", "Hamburg", "Dusseldorf"];
+const companiesArray = ["Personio", "HelloFresh"];
+const investorIds = [30, 25, 34];
 
 const Filter = () => {
+	const { state, dispatch } = useContext(store);
+	const [keyword, setKeyword] = useState();
+	const [cities, setCities] = useState([]);
+	const [companies, setCompanies] = useState([]);
+	const [investors, setInvestors] = useState([]);
+
+	// need to apply local state to update only on submit
+
+	const url = queryString.stringifyUrl({
+		url: "",
+		query: {
+			keyword,
+			cities,
+			companies,
+			investors,
+		},
+	});
+
+	const onSubmit = () => {
+		dispatch(actions.setKeyword(keyword));
+		dispatch(actions.setCities(cities));
+		dispatch(actions.setCompanies(companies));
+		dispatch(actions.setInvestors(investors));
+	};
+
 	return (
 		<Sider
 			size="large"
@@ -37,6 +68,7 @@ const Filter = () => {
 				suffix={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
+				onChange={(e) => setKeyword(e.target.value)}
 			/>
 			<Select
 				size="large"
@@ -44,14 +76,12 @@ const Filter = () => {
 				style={{ width: "100%", margin: "10px 0" }}
 				placeholder="City"
 				defaultValue={[]}
-				onChange={() => console.log("changed")}
-				showSearch
-				filterOption={false}
 				suffixIcon={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
+				onChange={(values) => setCities(values)}
 			>
-				{cities.map((city, i) => (
+				{citiesArray.map((city, i) => (
 					<Option key={i} value={city}>
 						{city}
 					</Option>
@@ -64,14 +94,14 @@ const Filter = () => {
 				style={{ width: "100%", margin: "10px 0" }}
 				placeholder="Company"
 				defaultValue={[]}
-				onChange={() => console.log("changed")}
 				suffixIcon={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
+				onChange={(values) => setCompanies(values)}
 			>
-				{cities.map((city, i) => (
-					<Option key={i} value={city}>
-						{city}
+				{companiesArray.map((company, i) => (
+					<Option key={i} value={company}>
+						{company}
 					</Option>
 				))}
 			</Select>
@@ -81,23 +111,25 @@ const Filter = () => {
 				style={{ width: "100%", margin: "10px 0" }}
 				placeholder="Investor"
 				defaultValue={[]}
-				onChange={() => console.log("changed")}
 				suffixIcon={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
+				onChange={(values) => setInvestors(values)}
 			>
-				{cities.map((city, i) => (
-					<Option key={i} value={city}>
-						{city}
+				{investorIds.map((investor, i) => (
+					<Option key={i} value={investor}>
+						{investor}
 					</Option>
 				))}
 			</Select>
-			<Button type="primary" danger>
-				Search
-			</Button>
-			<Button danger style={{ float: "right" }}>
-				Reset
-			</Button>
+			<Link type="primary" danger to={url}>
+				<Button type="primary" onClick={onSubmit}>
+					Search
+				</Button>
+			</Link>
+			<Link danger to="" style={{ float: "right" }}>
+				<Button type="default">Search</Button>
+			</Link>
 		</Sider>
 	);
 };
