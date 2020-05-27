@@ -29,9 +29,11 @@ const JobList = (props) => {
 		},
 	});
 
-	useEffect(() => {
-		refetch();
-	}, [keyword, cities, companies, investors]);
+	console.log("rendering joblist");
+
+	// useEffect(() => {
+	// 	refetch();
+	// }, [keyword, cities, companies, investors]);
 
 	useEffect(() => {
 		if (data?.jobs) {

@@ -12,13 +12,10 @@ import "./App.css";
 
 function App() {
 	return (
-		<StateProvider>
-			<ApolloProvider client={ApolloClient}>
-				<div className="App">
-					<Layout
-						className="main-layout"
-						style={{ width: "100%", height: "100%" }}
-					>
+		<div className="App">
+			<Layout className="main-layout" style={{ width: "100%", height: "100%" }}>
+				<StateProvider>
+					<ApolloProvider client={ApolloClient}>
 						<Router>
 							<Nav />
 							<Layout width="100%">
@@ -33,10 +30,10 @@ function App() {
 								</Layout.Content>
 							</Layout>
 						</Router>
-					</Layout>
-				</div>
-			</ApolloProvider>
-		</StateProvider>
+					</ApolloProvider>
+				</StateProvider>
+			</Layout>
+		</div>
 	);
 }
 

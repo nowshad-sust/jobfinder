@@ -13,8 +13,8 @@ const Job = ({
 	company: { name: companyName, company_investors },
 }) => {
 	return (
-		<Card size="large" hoverable active style={{ margin: "10px 0" }}>
-			<Skeleton loading={false} active>
+		<Card size="large" hoverable active="true" style={{ margin: "10px 0" }}>
+			<Skeleton loading={false} active="true">
 				<Row>
 					<Col span={16}>
 						<Title level={4} style={{ color: "#fb236a", marginBottom: 0 }}>

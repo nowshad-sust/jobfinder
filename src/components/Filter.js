@@ -1,13 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import queryString from "query-string";
 import { Layout, Input, Select, Button, Typography } from "antd";
 import {
 	SearchOutlined,
 	AuditOutlined,
 	EnvironmentOutlined,
-	DownSquareOutlined,
 } from "@ant-design/icons";
-import { BrowserRouter as Router, Link, useLocation } from "react-router-dom";
+import {
+	BrowserRouter as Router,
+	Link,
+	useLocation,
+	useHistory,
+} from "react-router-dom";
 import { store } from "../store/store";
 import * as actions from "../store/actions";
 
@@ -18,30 +22,62 @@ const citiesArray = ["Berlin", "Munich", "Cologne", "Hamburg", "Dusseldorf"];
 const companiesArray = ["Personio", "HelloFresh"];
 const investorIds = [30, 25, 34];
 
+const useQuery = () => {
+	return queryString.parse(useLocation().search);
+};
+
 const Filter = () => {
+	const query = useQuery();
+	const history = useHistory();
 	const { state, dispatch } = useContext(store);
-	const [keyword, setKeyword] = useState();
-	const [cities, setCities] = useState([]);
-	const [companies, setCompanies] = useState([]);
-	const [investors, setInvestors] = useState([]);
 
-	// need to apply local state to update only on submit
+	const [keyword, setKeyword] = useState(state.keyword);
+	const [cities, setCities] = useState(state.cities);
+	const [companies, setCompanies] = useState(state.companies);
+	const [investors, setInvestors] = useState(state.investors);
 
-	const url = queryString.stringifyUrl({
-		url: "",
-		query: {
-			keyword,
-			cities,
-			companies,
-			investors,
-		},
-	});
+	useEffect(() => {
+		setGlobalQuery(query);
+		setLocalQuery(query);
+	}, [JSON.stringify(query)]);
 
-	const onSubmit = () => {
+	const setGlobalQuery = ({
+		keyword = "",
+		cities = [],
+		companies = [],
+		investor = [],
+	}) => {
 		dispatch(actions.setKeyword(keyword));
 		dispatch(actions.setCities(cities));
 		dispatch(actions.setCompanies(companies));
 		dispatch(actions.setInvestors(investors));
+	};
+
+	const setLocalQuery = ({
+		keyword = "",
+		cities = [],
+		companies = [],
+		investor = [],
+	}) => {
+		setKeyword(keyword);
+		setCities(cities);
+		setCompanies(companies);
+		setInvestors(investors);
+	};
+
+	const onSubmit = () => {
+		setGlobalQuery(query);
+		const url = queryString.stringifyUrl({
+			url: "",
+			query: {
+				keyword,
+				cities,
+				companies,
+				investors,
+			},
+		});
+
+		history.push(url);
 	};
 
 	return (
@@ -64,6 +100,7 @@ const Filter = () => {
 				size="large"
 				style={{ width: "100%", margin: "10px 0" }}
 				defaultValue=""
+				value={keyword}
 				placeholder="Search jobs"
 				suffix={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
@@ -76,6 +113,7 @@ const Filter = () => {
 				style={{ width: "100%", margin: "10px 0" }}
 				placeholder="City"
 				defaultValue={[]}
+				value={cities}
 				suffixIcon={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
@@ -94,6 +132,7 @@ const Filter = () => {
 				style={{ width: "100%", margin: "10px 0" }}
 				placeholder="Company"
 				defaultValue={[]}
+				value={companies}
 				suffixIcon={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
@@ -111,6 +150,7 @@ const Filter = () => {
 				style={{ width: "100%", margin: "10px 0" }}
 				placeholder="Investor"
 				defaultValue={[]}
+				value={investors}
 				suffixIcon={
 					<SearchOutlined style={{ fontSize: "20px", color: "#fb266b" }} />
 				}
@@ -122,12 +162,10 @@ const Filter = () => {
 					</Option>
 				))}
 			</Select>
-			<Link type="primary" danger to={url}>
-				<Button type="primary" onClick={onSubmit}>
-					Search
-				</Button>
-			</Link>
-			<Link danger to="" style={{ float: "right" }}>
+			<Button type="primary" onClick={onSubmit} danger>
+				Search
+			</Button>
+			<Link to="" style={{ float: "right" }} danger>
 				<Button type="default">Search</Button>
 			</Link>
 		</Sider>
