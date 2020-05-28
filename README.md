@@ -51,4 +51,9 @@ Hasura helps you build GraphQL apps backed by Postgres or incrementally move to 
 
 Read more at [hasura.io](https://hasura.io) and the [docs](https://hasura.io/docs).
 
-
+## TODO
+- [ ] Modularize componetns (filters)
+- [ ] Add Search by name to investors 
+- [ ] Refactor Filter local states
+- [ ] Refactor Global states
+ 
