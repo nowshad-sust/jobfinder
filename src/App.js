@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout } from "antd";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "./apollo";
 import { StateProvider } from "./store/store";

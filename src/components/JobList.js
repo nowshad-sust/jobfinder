@@ -1,39 +1,44 @@
 import React, { useState, useContext, useEffect } from "react";
-import PropTypes from "prop-types";
-import { Empty } from "antd";
+import { Empty, List, Card, Skeleton, Alert } from "antd";
+import InfiniteScroll from "react-infinite-scroller";
 import { useQuery } from "@apollo/react-hooks";
 import { QUERY_JOBS } from "../queries/Jobs";
-import Job from "./Job";
 import { store } from "../store/store";
-import {
-	setKeyword,
-	setCities,
-	setCompanies,
-	setInvestors,
-} from "../store/actions";
+import Job from "./Job";
+import { Shimmer, ErrorBlock, EmptyBlock } from "./Commons";
+
+const LIMIT_PER_PAGE = 10;
 
 const JobList = (props) => {
-	const { state, dispatch } = useContext(store);
-	// const [loading, setLoading] = useState(true);
-	// const [error, setError] = useState(false);
+	const { state } = useContext(store);
+	const [hasMore, setHasMore] = useState(true);
+	const [page, setPage] = useState(1);
 	const [jobs, setJobs] = useState([]);
 
 	const { keyword, cities, companies, investors } = state;
 
-	const { loading, error, data, refetch } = useQuery(QUERY_JOBS, {
-		variables: {
-			keyword: keyword ? `%${keyword}%` : "%%",
-			cities: cities.length > 0 ? cities : null,
-			companies: companies.length > 0 ? companies : null,
-			investors: investors.length > 0 ? investors : null,
-		},
-	});
+	const { loading, networkStatus, error, data, fetchMore } = useQuery(
+		QUERY_JOBS,
+		{
+			variables: {
+				limit: LIMIT_PER_PAGE,
+				offset: 0,
+				keyword: keyword ? `%${keyword}%` : "%%",
+				cities: cities.length > 0 ? cities : null,
+				companies: companies.length > 0 ? companies : null,
+				investors: investors.length > 0 ? investors : null,
+			},
+			notifyOnNetworkStatusChange: true,
+		}
+	);
 
-	console.log("rendering joblist");
+	const reFetching = networkStatus === 4;
 
-	// useEffect(() => {
-	// 	refetch();
-	// }, [keyword, cities, companies, investors]);
+	useEffect(() => {
+		setJobs([]);
+		setHasMore(true);
+		setPage(1);
+	}, [keyword, cities, companies, investors]);
 
 	useEffect(() => {
 		if (data?.jobs) {
@@ -41,13 +46,50 @@ const JobList = (props) => {
 		}
 	}, [data]);
 
-	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error</p>;
-	if (jobs.length === 0) return <Empty>We couldn't find anything!</Empty>;
+	const loadMore = () => {
+		if (loading || reFetching) return;
+		setPage((page) => page + 1);
+		fetchMore({
+			variables: {
+				offset: page * LIMIT_PER_PAGE,
+			},
+			updateQuery: (prev, { fetchMoreResult }) => {
+				if (!fetchMoreResult) return prev;
+				if (fetchMoreResult?.jobs?.length === 0) {
+					setHasMore(false);
+				}
+				return Object.assign({}, prev, {
+					jobs: [...prev.jobs, ...fetchMoreResult.jobs],
+				});
+			},
+		});
+	};
 
-	return jobs.map((job) => <Job key={job.id} {...job} />);
+	if (page === 1 && loading) return <Shimmer />;
+	if (error) return <ErrorBlock />;
+	if (jobs.length === 0) return <EmptyBlock />;
+
+	return (
+		<div style={{ height: "90vh", overflow: "auto" }}>
+			<InfiniteScroll
+				initialLoad={false}
+				pageStart={0}
+				loadMore={loadMore}
+				hasMore={hasMore}
+				useWindow={false}
+			>
+				<List
+					dataSource={jobs}
+					renderItem={(job) => <Job key={job.id} {...job} />}
+				/>
+				{(loading || reFetching) && (
+					<div style={{ width: "100%", textAlign: "center" }}>
+						<Shimmer />
+					</div>
+				)}
+			</InfiniteScroll>
+		</div>
+	);
 };
-
-JobList.propTypes = {};
 
 export default JobList;

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Layout, Typography } from "antd";
 import { AuditOutlined } from "@ant-design/icons";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header } = Layout;
 
 const Nav = () => {
 	return (

@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { Card, Skeleton, Typography, Row, Col, List } from "antd";
 import { EnvironmentOutlined } from "@ant-design/icons";
 
-const { Meta } = Card;
 const { Title, Text } = Typography;
 
 const Job = ({
@@ -11,10 +10,11 @@ const Job = ({
 	title,
 	city,
 	company: { name: companyName, company_investors },
+	loading = false,
 }) => {
 	return (
 		<Card size="large" hoverable active="true" style={{ margin: "10px 0" }}>
-			<Skeleton loading={false} active="true">
+			<Skeleton loading={loading} active="true">
 				<Row>
 					<Col span={16}>
 						<Title level={4} style={{ color: "#fb236a", marginBottom: 0 }}>

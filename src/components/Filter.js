@@ -1,51 +1,44 @@
 import React, { useState, useEffect, useContext } from "react";
 import queryString from "query-string";
-import { Layout, Input, Select, Button, Typography } from "antd";
-import {
-	SearchOutlined,
-	AuditOutlined,
-	EnvironmentOutlined,
-} from "@ant-design/icons";
-import {
-	BrowserRouter as Router,
-	Link,
-	useLocation,
-	useHistory,
-} from "react-router-dom";
+import { Layout, Input, Select, Button } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import { useLocation, useHistory } from "react-router-dom";
+import { useQuery } from "@apollo/react-hooks";
+import { QUERY_FILTERS } from "../queries/Filters";
 import { store } from "../store/store";
 import * as actions from "../store/actions";
+import { Shimmer, ErrorBlock } from "./Commons";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Sider } = Layout;
 const { Option } = Select;
 
-const citiesArray = ["Berlin", "Munich", "Cologne", "Hamburg", "Dusseldorf"];
-const companiesArray = ["Personio", "HelloFresh"];
-const investorIds = [30, 25, 34];
-
-const useQuery = () => {
+const useQueryParams = () => {
 	return queryString.parse(useLocation().search);
 };
 
 const Filter = () => {
-	const query = useQuery();
+	const query = useQueryParams();
 	const history = useHistory();
 	const { state, dispatch } = useContext(store);
-
 	const [keyword, setKeyword] = useState(state.keyword);
 	const [cities, setCities] = useState(state.cities);
 	const [companies, setCompanies] = useState(state.companies);
 	const [investors, setInvestors] = useState(state.investors);
+	const { loading, error, data } = useQuery(QUERY_FILTERS);
 
+	// Update states when loaded with query params
+	// or query changes
 	useEffect(() => {
 		setGlobalQuery(query);
 		setLocalQuery(query);
 	}, [JSON.stringify(query)]);
 
+	// set global state filters
 	const setGlobalQuery = ({
 		keyword = "",
 		cities = [],
 		companies = [],
-		investor = [],
+		investors = [],
 	}) => {
 		dispatch(actions.setKeyword(keyword));
 		dispatch(actions.setCities(cities));
@@ -53,11 +46,12 @@ const Filter = () => {
 		dispatch(actions.setInvestors(investors));
 	};
 
+	// set local filter states
 	const setLocalQuery = ({
 		keyword = "",
 		cities = [],
 		companies = [],
-		investor = [],
+		investors = [],
 	}) => {
 		setKeyword(keyword);
 		setCities(cities);
@@ -66,19 +60,36 @@ const Filter = () => {
 	};
 
 	const onSubmit = () => {
+		// conditionally add queries
+		const query = {
+			...(keyword && { keyword }),
+			...(cities && { cities }),
+			...(companies && { companies }),
+			...(investors && { investors }),
+		};
 		setGlobalQuery(query);
 		const url = queryString.stringifyUrl({
 			url: "",
-			query: {
-				keyword,
-				cities,
-				companies,
-				investors,
-			},
+			query,
 		});
 
 		history.push(url);
 	};
+
+	const onReset = () => {
+		// only for handling when query is empty
+		setLocalQuery({});
+
+		//removes all the filters
+		history.push("");
+	};
+
+	if (loading) return <Shimmer />;
+	if (error) return <ErrorBlock />;
+
+	const citiesArray = data.cities.map((obj) => obj.city);
+	const companiesArray = data.companies.map((c) => c.name);
+	const investorsArray = data.investors; // we'll use ids for query
 
 	return (
 		<Sider
@@ -156,18 +167,30 @@ const Filter = () => {
 				}
 				onChange={(values) => setInvestors(values)}
 			>
-				{investorIds.map((investor, i) => (
-					<Option key={i} value={investor}>
-						{investor}
+				{investorsArray.map((investor, i) => (
+					<Option key={i} value={`${investor.id}`}>
+						{investor.name}
 					</Option>
 				))}
 			</Select>
-			<Button type="primary" onClick={onSubmit} danger>
+			<Button
+				type="primary"
+				onClick={onSubmit}
+				danger="true"
+				disabled={
+					!keyword && !cities.length && !companies.length && !investors.length
+				}
+			>
 				Search
 			</Button>
-			<Link to="" style={{ float: "right" }} danger>
-				<Button type="default">Search</Button>
-			</Link>
+			<Button
+				type="default"
+				style={{ float: "right" }}
+				danger="true"
+				onClick={onReset}
+			>
+				Reset
+			</Button>
 		</Sider>
 	);
 };
